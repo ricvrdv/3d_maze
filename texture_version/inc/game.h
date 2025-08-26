@@ -1,9 +1,11 @@
 #ifndef GAME_H
 # define GAME_H
 
-# define WIDTH 1280
-# define HEIGHT 720
+# define WIDTH 500
+# define HEIGHT 200
 # define TILE 64
+
+# define NUM_TEXTURES 4
 
 # define W 13
 # define A 0
@@ -21,6 +23,13 @@
 # include <math.h>
 # include <stdbool.h>
 # include "./minilibx/mlx.h"
+
+typedef struct  s_texture
+{
+    void    *img;
+    int     width;
+    int     height;
+} t_texture;
 
 typedef struct  s_player
 {
@@ -50,6 +59,11 @@ typedef struct  s_game
     t_player    player;
 
 	char	**map;
+
+    t_texture   textures[NUM_TEXTURES];
+    t_texture   screen;
+    int         floor_color;
+    int         ceiling_color;
 } t_game;
 
 void	init_player(t_player *player);
@@ -57,5 +71,9 @@ int		key_press(int keycode, t_player *player);
 int		key_release(int keycode, t_player *player);
 void	move_player(t_player *player);
 void    clear_image(t_game *game);
+void    load_textures(t_game *game);
+void    draw_textured_wall(t_game *game, int x, int start_y, int end_y, int tex_x, int texture_idx);
+void	mlx_draw_vertical_line(t_game *game, int x, int start_y, int end_y, int color);
+void	fill_image(t_game *game, int color);
 
 #endif

@@ -21,7 +21,9 @@ MLX_FLAGS = -L$(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
 #==============================================================================#
 
 SRC = src/main.c \
-	src/player.c
+	src/player.c \
+	src/draw.c \
+	src/texture.c
 
 OBJ = $(SRC:.c=.o)
 

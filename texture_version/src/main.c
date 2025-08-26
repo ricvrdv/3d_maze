@@ -73,9 +73,13 @@ void    init_game(t_game *game)
     game->map = get_map();
     game->mlx = mlx_init();
     game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "TEST");
-    game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-    game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+    
+    game->screen.img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+    game->screen.width = WIDTH;
+    game->screen.height = HEIGHT;
+    game->data = mlx_get_data_addr(game->screen.img, &game->bpp, &game->size_line, &game->endian);
+    load_textures(game);
+    mlx_put_image_to_window(game->mlx, game->win, game->screen.img, 0, 0);
 }
 
 bool	touch(float px, float py, t_game *game)
@@ -110,19 +114,23 @@ float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
 	return (fix_dist);
 }
 
-void	draw_line(t_player *player, t_game *game, float start_x, int i)
+void	draw_line(t_player *player, t_game *game, float ray_angle, int x)
 {
 	float	cos_angle;
 	float	sin_angle;
 	float	ray_x;
 	float	ray_y;
 	float	dist;
-	float	height;
-	int		start_y;
-	int		end;
+    float   perp_dist;
+	float	wall_height;
+    int     wall_top;
+    int     wall_bottom;
+    int     texture_num;
+    float   wall_x;
+    int     tex_x;
 
-	cos_angle = cos(start_x);
-	sin_angle = sin(start_x);
+	cos_angle = cos(ray_angle);
+	sin_angle = sin(ray_angle);
 	ray_x = player->x;
 	ray_y = player->y;
 
@@ -133,14 +141,35 @@ void	draw_line(t_player *player, t_game *game, float start_x, int i)
 		ray_y += sin_angle;
 	}
 	dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
-	height = (TILE / dist) * (WIDTH / 2);
-	start_y = (HEIGHT - height) / 2;
-	end = start_y + height;
-	while (start_y < end)
+	perp_dist = dist * cos(ray_angle - player->angle);
+	wall_height = (int)(HEIGHT / perp_dist);
+	if (wall_height > HEIGHT)
+		wall_height = HEIGHT;
+    if (fabs(cos_angle) > fabs(sin_angle))
+    {
+        if (cos_angle > 0)
+            texture_num = 0;
+        else
+			texture_num = 1;
+    }
+	else
 	{
-		put_pixel(i, start_y, 255, game);
-		start_y++;
+		if (sin_angle > 0)
+			texture_num = 2;
+		else
+			texture_num = 3;
 	}
+
+	if (fabs(cos_angle) > fabs(sin_angle))
+		wall_x = ray_y - floor(ray_y / TILE) * TILE;
+	else
+		wall_x = ray_x - floor(ray_x / TILE) * TILE;
+	tex_x = (int)(wall_x * game->textures[texture_num].width / TILE);
+	mlx_draw_vertical_line(game, x, 0, (HEIGHT - wall_height) / 2, game->ceiling_color);
+	wall_top = (HEIGHT - wall_height) / 2;
+	wall_bottom = wall_top + wall_height;
+	draw_textured_wall(game, x, wall_top, wall_bottom, tex_x, texture_num);
+	mlx_draw_vertical_line(game, x, wall_bottom, HEIGHT, game->floor_color);
 }
 
 int draw_loop(t_game *game)
@@ -152,12 +181,13 @@ int draw_loop(t_game *game)
 
     player = &game->player;
     move_player(player);
-    clear_image(game);
+	fill_image(game, 0x000000);
+    //clear_image(game);
     //draw_square(player->x, player->y, 10, 0x00FF00, game);
     //draw_map(game);
 
-	fraction = PI / 3 / WIDTH;
-	start_x = player->angle - PI / 6;
+	fraction = (PI / 3) / WIDTH;
+	start_x = player->angle - (PI / 6);
 	i = 0;
 	while (i < WIDTH)
 	{
@@ -165,7 +195,7 @@ int draw_loop(t_game *game)
 		start_x += fraction;
 		i++;
 	}
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+    mlx_put_image_to_window(game->mlx, game->win, game->screen.img, 0, 0);
     return (0);
 }
 
