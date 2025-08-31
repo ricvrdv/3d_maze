@@ -7,12 +7,13 @@
 # define MAP_WIDTH 24
 # define MAP_HEIGHT 24
 
-# define W 119
-# define A 97
-# define S 115
-# define D 100
-# define LEFT 65361
-# define RIGHT 65363
+# define KEY_W 119
+# define KEY_A 97
+# define KEY_S 115
+# define KEY_D 100
+# define KEY_LEFT 65361
+# define KEY_RIGHT 65363
+# define KEY_ESC 65307
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -52,7 +53,16 @@ void    init_game(t_game *game);
 void    init_player(t_game *game);
 void    init_map(int map[MAP_HEIGHT][MAP_WIDTH]);
 
+int     main_loop(t_game *game);
+void    raycast(t_game *game);
+void    draw_vertical_line(t_game *game, int x, int start, int end, int color);
+
+int     handle_keypress(int keycode, t_game *game);
+void    move_player(t_game *game, int keycode);
+void	rotate_player(t_game *game, double rot_speed);
+
 void    ft_error(char *message);
 void    my_mlx_pixel_put(t_img *img, int x, int y, int color);
+int     exit_game(t_game *game);
 
 #endif

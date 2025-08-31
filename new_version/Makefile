@@ -24,7 +24,7 @@ MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
 # SOURCE FILES                                                                 #
 #==============================================================================#
 
-SRC = src/main.c
+SRC = src/main.c src/init.c src/render.c src/events.c src/utils.c
 
 OBJ = $(SRC:.c=.o)
 

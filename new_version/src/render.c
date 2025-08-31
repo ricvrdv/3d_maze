@@ -108,7 +108,28 @@ void    raycast(t_game *game)
             drawStart = 0;
         
         drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-
+        if (drawEnd >= SCREEN_HEIGHT)
+            drawEnd = SCREEN_HEIGHT - 1;
+        switch(game->map[mapY][mapX])
+		{
+			case 1: color = 0xFF0000; break; // Red
+			case 2: color = 0x00FF00; break; // Green
+			case 3: color = 0x0000FF; break; // Blue
+			case 4: color = 0xFFFFFF; break; // White
+			default: color = 0xFFFF00; break; // Yellow
+		}
+        if (side == 1)
+            color = (color >> 1) & 0x7F7F7F;
+        draw_vertical_line(game, x, drawStart, drawEnd, color);
         x++;
+    }
+}
+
+void    draw_vertical_line(t_game *game, int x, int start, int end, int color)
+{
+    while (start < end)
+    {
+        my_mlx_pixel_put(&game->img, x, start, color);
+        start++;
     }
 }
