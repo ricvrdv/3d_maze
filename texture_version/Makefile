@@ -80,6 +80,7 @@ fclean: clean
 	fi
 	@$(MAKE) fclean -C $(LIBFT_DIR)
 	@$(MAKE) clean -C $(MLX_DIR)
+	@$(RM) $(MLX_DIR)
 
 re: fclean all
 
