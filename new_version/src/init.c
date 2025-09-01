@@ -16,6 +16,8 @@ void    init_game(t_game *game)
     game->img.addr = mlx_get_data_addr(game->img.img_ptr,
         &game->img.bits_per_pixel, &game->img.line_length,
         &game->img.endian);
+    game->img.width = SCREEN_WIDTH;
+    game->img.height = SCREEN_HEIGHT;
     init_player(game);
     init_map(game->map);
 }
