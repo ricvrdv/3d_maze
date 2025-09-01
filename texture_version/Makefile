@@ -6,24 +6,25 @@ NAME = game
 
 CC = cc
 
-CFLAGS = -g -Wall -Wextra -Werror -Iminilibx
+CFLAGS = -g -Wall -Wextra -Werror -Iminilibx-linux
 
 RM = rm -rf
 
-MLX_DIR = ./inc/minilibx
+LIBFT_DIR = ./inc/libft
 
-MLX = $(MLX_DIR)/libmlx.all
+LIBFT = $(LIBFT_DIR)/libft.a
 
-MLX_FLAGS = -L$(MLX_DIR) -lmlx -framework OpenGL -framework AppKit
+MLX_DIR = ./inc/minilibx-linux
+
+MLX = $(MLX_DIR)/libmlx.a
+
+MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
 
 #==============================================================================#
 # SOURCE FILES                                                                 #
 #==============================================================================#
 
-SRC = src/main.c \
-	src/player.c \
-	src/draw.c \
-	src/texture.c
+SRC = src/main.c src/init.c src/render.c src/events.c src/utils.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -41,16 +42,23 @@ RESET = \033[0m
 # RULES                                                                        #
 #==============================================================================#
 
-all: $(MLX) $(NAME)
+all: $(MLX) $(LIBFT) $(NAME)
+
+$(LIBFT):
+	@$(MAKE) -C $(LIBFT_DIR)
 
 $(MLX):
+	@if [ ! -d "$(MLX_DIR)" ]; then \
+	echo "Cloning MiniLibX..."; \
+	git clone https://github.com/42paris/minilibx-linux.git $(MLX_DIR); \
+	fi
 	@$(MAKE) -C $(MLX_DIR)
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@ -I./inc
 
-$(NAME): $(OBJ) $(MLX)
-	@$(CC) $(CFLAGS) $(OBJ) $(MLX_FLAGS) -o $(NAME)
+$(NAME): $(OBJ) $(LIBFT) $(MLX)
+	@$(CC) $(CFLAGS) $(OBJ) $(MLX_FLAGS) -L$(LIBFT_DIR) -lft -o $(NAME)
 	@echo "$(GREEN)Compilation Successful!$(RESET)"
 
 clean:
@@ -60,6 +68,7 @@ clean:
 	else \
 		echo "$(RED)No object files to remove.$(RESET)"; \
 	fi
+	@$(MAKE) clean -C $(LIBFT_DIR)
 	@$(MAKE) clean -C $(MLX_DIR)
 
 fclean: clean
@@ -69,6 +78,7 @@ fclean: clean
 	else \
 		echo "$(RED)No executable to remove.$(RESET)"; \
 	fi
+	@$(MAKE) fclean -C $(LIBFT_DIR)
 	@$(MAKE) clean -C $(MLX_DIR)
 
 re: fclean all
