@@ -11,6 +11,7 @@ int main_loop(t_game *game)
 
 void    raycast(t_game *game)
 {
+    t_player    *player;
     int     x;
     double  cameraX;
     double  rayDirX;
@@ -38,14 +39,15 @@ void    raycast(t_game *game)
     int     color;          // Pixel color from texture
     t_img   *current_tex;   // Pointer to current texture
 
+    player = &game->player;
     x = 0;
     while (x < SCREEN_WIDTH)
     {
         cameraX = 2 * x / (double)SCREEN_WIDTH -1;
-        rayDirX = game->dirX + game->planeX * cameraX;
-        rayDirY = game->dirY + game->planeY * cameraX;
-        mapX = (int)game->posX;
-        mapY = (int)game->posY;
+        rayDirX = player->dirX + player->planeX * cameraX;
+        rayDirY = player->dirY + player->planeY * cameraX;
+        mapX = (int)player->posX;
+        mapY = (int)player->posY;
         if (rayDirX == 0)
             deltaDistX = 1e30;
         else
@@ -58,22 +60,22 @@ void    raycast(t_game *game)
         if (rayDirX < 0)
         {
             stepX = -1;
-            sideDistX = (game->posX - mapX) * deltaDistX;
+            sideDistX = (player->posX - mapX) * deltaDistX;
         }
         else
         {
             stepX = 1;
-            sideDistX = (mapX + 1.0 - game->posX) * deltaDistX;
+            sideDistX = (mapX + 1.0 - player->posX) * deltaDistX;
         }
         if (rayDirY < 0)
         {
             stepY = -1;
-            sideDistY = (game->posY - mapY) * deltaDistY;
+            sideDistY = (player->posY - mapY) * deltaDistY;
         }
         else
         {
             stepY = 1;
-            sideDistY = (mapY + 1.0 - game->posY) * deltaDistY;
+            sideDistY = (mapY + 1.0 - player->posY) * deltaDistY;
         }
         while (hit == 0)
         {
@@ -108,9 +110,9 @@ void    raycast(t_game *game)
 
         // 1. Calculate exact wall hit point
         if (side == 0) // X-side hit (EAST/WEST wall)
-            wallX = game->posY + perpWallDist * rayDirY;
+            wallX = player->posY + perpWallDist * rayDirY;
         else // Y-side hit (NORTH/SOUTH wall)
-            wallX = game->posX + perpWallDist * rayDirX;
+            wallX = player->posX + perpWallDist * rayDirX;
         wallX -= floor(wallX); // Get fractional part (0.0 to 1.0)
 
         // 2. Determine which texture to use based on wall direction

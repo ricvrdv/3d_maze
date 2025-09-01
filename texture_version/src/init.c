@@ -28,7 +28,7 @@ void    init_game(t_game *game)
     load_texture(game, &game->we_texture, "textures/west.xpm");
     load_texture(game, &game->ea_texture, "textures/east.xpm");
 
-    init_player(game);
+    init_player(&game->player);
     init_map(game->map);
 }
 
@@ -69,23 +69,23 @@ void    draw_floor_ceiling(t_game *game)
     }
 }
 
-void    init_player(t_game *game)
+void    init_player(t_player *player)
 {
-    game->key_w = false;
-    game->key_s = false;
-    game->key_a = false;
-    game->key_d = false;
-    game->key_left = false;
-    game->key_right = false;
+    player->key_w = false;
+    player->key_s = false;
+    player->key_a = false;
+    player->key_d = false;
+    player->key_left = false;
+    player->key_right = false;
     
-    game->posX = 22.0;
-    game->posY = 12.0;
-    game->dirX = -1.0;
-    game->dirY = 0.0;
-    game->planeX = 0.0;
-    game->planeY = 0.66;
-    game->move_speed = 0.02;
-    game->rot_speed = 0.01;
+    player->posX = 22.0;
+    player->posY = 12.0;
+    player->dirX = -1.0;
+    player->dirY = 0.0;
+    player->planeX = 0.0;
+    player->planeY = 0.66;
+    player->move_speed = 0.02;
+    player->rot_speed = 0.01;
 }
 
 void    init_map(int map[MAP_HEIGHT][MAP_WIDTH])

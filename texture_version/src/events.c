@@ -2,37 +2,40 @@
 
 int key_press(int keycode, t_game *game)
 {
-    if (keycode == KEY_ESC)
+    t_player	*player;
+
+	player = &game->player;
+	if (keycode == KEY_ESC)
         exit_game(game);
     else if (keycode == KEY_W)
-        game->key_w = true;
+        player->key_w = true;
     else if (keycode == KEY_A)
-        game->key_a = true;
+        player->key_a = true;
     else if (keycode == KEY_S)
-        game->key_s = true;
+        player->key_s = true;
     else if (keycode == KEY_D)
-        game->key_d = true;
+        player->key_d = true;
     else if (keycode == KEY_LEFT)
-        game->key_left = true;
+        player->key_left = true;
     else if (keycode == KEY_RIGHT)
-        game->key_right = true;
+        player->key_right = true;
     return (0);
 }
 
-int key_release(int keycode, t_game *game)
+int key_release(int keycode, t_player *player)
 {
     if (keycode == KEY_W)
-        game->key_w = false;
+        player->key_w = false;
     else if (keycode == KEY_A)
-        game->key_a = false;
+        player->key_a = false;
     else if (keycode == KEY_S)
-        game->key_s = false;
+        player->key_s = false;
     else if (keycode == KEY_D)
-        game->key_d = false;
+        player->key_d = false;
     else if (keycode == KEY_LEFT)
-        game->key_left = false;
+        player->key_left = false;
     else if (keycode == KEY_RIGHT)
-        game->key_right = false;
+        player->key_right = false;
     return (0);
 }
 
@@ -41,54 +44,56 @@ void handle_movement(t_game *game)
     double moveX;
     double moveY;
     double rotSpeed;
+	t_player	*player;
 
+	player = &game->player;
     moveX = 0;
 	moveY = 0;
 	rotSpeed = 0;
-    if (game->key_w)
+    if (player->key_w)
 	{
-		moveX += game->dirX * game->move_speed;
-		moveY += game->dirY * game->move_speed;
+		moveX += player->dirX * player->move_speed;
+		moveY += player->dirY * player->move_speed;
 	}
-    if (game->key_s)
+    if (player->key_s)
 	{
-		moveX -= game->dirX * game->move_speed;
-		moveY -= game->dirY * game->move_speed;
+		moveX -= player->dirX * player->move_speed;
+		moveY -= player->dirY * player->move_speed;
 	}
-    if (game->key_a)
+    if (player->key_a)
 	{
-		moveX -= game->dirY * game->move_speed;
-		moveY += game->dirX * game->move_speed;
+		moveX -= player->dirY * player->move_speed;
+		moveY += player->dirX * player->move_speed;
 	}
-    if (game->key_d)
+    if (player->key_d)
 	{
-		moveX += game->dirY * game->move_speed;
-		moveY -= game->dirX * game->move_speed;
+		moveX += player->dirY * player->move_speed;
+		moveY -= player->dirX * player->move_speed;
 	}
-    if (game->key_left) 
-		rotSpeed += game->rot_speed;
-    if (game->key_right)
-		rotSpeed -= game->rot_speed;
+    if (player->key_left) 
+		rotSpeed += player->rot_speed;
+    if (player->key_right)
+		rotSpeed -= player->rot_speed;
     if (rotSpeed != 0)
-        rotate_player(game, rotSpeed);
+        rotate_player(player, rotSpeed);
     if (moveX != 0 || moveY != 0)
     {
-        if (game->map[(int)(game->posY)][(int)(game->posX + moveX)] == 0)
-            game->posX += moveX;
-        if (game->map[(int)(game->posY + moveY)][(int)(game->posX)] == 0)
-            game->posY += moveY;
+        if (game->map[(int)(player->posY)][(int)(player->posX + moveX)] == 0)
+            player->posX += moveX;
+        if (game->map[(int)(player->posY + moveY)][(int)(player->posX)] == 0)
+            player->posY += moveY;
     }
 }
 
-void	rotate_player(t_game *game, double rot_speed)
+void	rotate_player(t_player *player, double rot_speed)
 {
 	double  oldDirX;
     double  oldPlaneX;
 
-    oldDirX = game->dirX;
-	game->dirX = game->dirX * cos(rot_speed) - game->dirY * sin(rot_speed);
-	game->dirY = oldDirX * sin(rot_speed) + game->dirY * cos(rot_speed);
-	oldPlaneX = game->planeX;
-	game->planeX = game->planeX * cos(rot_speed) - game->planeY * sin(rot_speed);
-	game->planeY = oldPlaneX * sin(rot_speed) + game->planeY * cos(rot_speed);
+    oldDirX = player->dirX;
+	player->dirX = player->dirX * cos(rot_speed) - player->dirY * sin(rot_speed);
+	player->dirY = oldDirX * sin(rot_speed) + player->dirY * cos(rot_speed);
+	oldPlaneX = player->planeX;
+	player->planeX = player->planeX * cos(rot_speed) - player->planeY * sin(rot_speed);
+	player->planeY = oldPlaneX * sin(rot_speed) + player->planeY * cos(rot_speed);
 }

@@ -35,6 +35,24 @@ typedef struct  s_img
     int     height;
 } t_img;
 
+typedef struct  s_player
+{
+    double  posX;
+    double  posY;
+    double  dirX;
+    double  dirY;
+    double  planeX;
+    double  planeY;
+    double  move_speed;
+    double  rot_speed;
+    bool    key_w;
+    bool    key_s;
+    bool    key_a;
+    bool    key_d;
+    bool    key_left;
+    bool    key_right;
+} t_player;
+
 typedef struct  s_game
 {
     void    *mlx_ptr;
@@ -46,28 +64,29 @@ typedef struct  s_game
     t_img   we_texture;
     t_img   ea_texture;
 
-    bool    key_w;
-    bool    key_s;
-    bool    key_a;
-    bool    key_d;
-    bool    key_left;
-    bool    key_right;
+    //bool    key_w;
+    //bool    key_s;
+    //bool    key_a;
+    //bool    key_d;
+    //bool    key_left;
+    //bool    key_right;
 
     int     map[MAP_HEIGHT][MAP_WIDTH];
     int     ceiling;
     int     floor;
-    double  posX;
-    double  posY;
-    double  dirX;
-    double  dirY;
-    double  planeX;
-    double  planeY;
-    double  move_speed;
-    double  rot_speed;
+    //double  posX;
+    //double  posY;
+    // double  dirX;
+    // double  dirY;
+    // double  planeX;
+    // double  planeY;
+    // double  move_speed;
+    // double  rot_speed;
+    t_player    player;
 } t_game;
 
 void    init_game(t_game *game);
-void    init_player(t_game *game);
+void    init_player(t_player *player);
 void    init_map(int map[MAP_HEIGHT][MAP_WIDTH]);
 void    load_texture(t_game *game, t_img *texture, char *file_path);
 int     main_loop(t_game *game);
@@ -75,9 +94,9 @@ void    draw_floor_ceiling(t_game *game);
 void    raycast(t_game *game);
 int     get_texture_pixel(t_img *texture, int x, int y);
 int     key_press(int keycode, t_game *game);
-int     key_release(int keycode, t_game *game);
+int     key_release(int keycode, t_player *player);
 void    handle_movement(t_game *game);
-void	rotate_player(t_game *game, double rot_speed);
+void	rotate_player(t_player *player, double rot_speed);
 
 void    ft_error(char *message);
 void    my_mlx_pixel_put(t_img *img, int x, int y, int color);
