@@ -64,24 +64,9 @@ typedef struct  s_game
     t_img   we_texture;
     t_img   ea_texture;
 
-    //bool    key_w;
-    //bool    key_s;
-    //bool    key_a;
-    //bool    key_d;
-    //bool    key_left;
-    //bool    key_right;
-
     int     map[MAP_HEIGHT][MAP_WIDTH];
     int     ceiling;
     int     floor;
-    //double  posX;
-    //double  posY;
-    // double  dirX;
-    // double  dirY;
-    // double  planeX;
-    // double  planeY;
-    // double  move_speed;
-    // double  rot_speed;
     t_player    player;
 } t_game;
 

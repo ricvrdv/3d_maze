@@ -25,19 +25,19 @@ void    raycast(t_game *game)
     int     stepX;
     int     stepY;
     int     hit;
-    int     side; // side = 0 if hit X-side, side = 1 if hit Y-side
+    int     side;
     double  perpWallDist;
     int     lineHeight;
     int     drawStart;
     int     drawEnd;
 
-    double  wallX;          // Exact hit point on the wall
-    int     texX;           // Texture X coordinate
-    double  texPos;         // Texture position
-    double  step;           // Texture step size
-    int     texY;           // Texture Y coordinate
-    int     color;          // Pixel color from texture
-    t_img   *current_tex;   // Pointer to current texture
+    double  wallX;
+    int     texX;
+    double  texPos;
+    double  step;
+    int     texY;
+    int     color;
+    t_img   *current_tex;
 
     player = &game->player;
     x = 0;
@@ -98,63 +98,49 @@ void    raycast(t_game *game)
             perpWallDist = sideDistX - deltaDistX;
         else
             perpWallDist = sideDistY - deltaDistY;
-        
         lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
         drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawStart < 0)
             drawStart = 0;
-        
         drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
         if (drawEnd >= SCREEN_HEIGHT)
             drawEnd = SCREEN_HEIGHT - 1;
-
-        // 1. Calculate exact wall hit point
-        if (side == 0) // X-side hit (EAST/WEST wall)
+        if (side == 0)
             wallX = player->posY + perpWallDist * rayDirY;
-        else // Y-side hit (NORTH/SOUTH wall)
+        else
             wallX = player->posX + perpWallDist * rayDirX;
-        wallX -= floor(wallX); // Get fractional part (0.0 to 1.0)
-
-        // 2. Determine which texture to use based on wall direction
-        if (side == 1) // Hit a Y-side wall
+        wallX -= floor(wallX);
+        if (side == 1)
         {
-            if (rayDirY > 0) // Ray was going DOWN (South-facing wall)
+            if (rayDirY > 0)
                 current_tex = &game->so_texture;
-            else // Ray was going UP (North-facing wall)
+            else
                 current_tex = &game->no_texture;
         }
-        else // Hit an X-side wall
+        else
         {
-            if (rayDirX > 0) // Ray was going RIGHT (East-facing wall)
+            if (rayDirX > 0)
                 current_tex = &game->ea_texture;
-            else // Ray was going LEFT (West-facing wall)
+            else
                 current_tex = &game->we_texture;
         }
 
-        // 3. Calculate texture X coordinate
         texX = (int)(wallX * (double)current_tex->width);
         if ((side == 0 && rayDirX > 0) || (side == 1 && rayDirY < 0))
             texX = current_tex->width - texX - 1;
 
-        // 4. Calculate texture stepping
         step = 1.0 * current_tex->height / lineHeight;
         texPos = (drawStart - SCREEN_HEIGHT / 2 + lineHeight / 2) * step;
 
-        // 5. Draw the textured vertical stripe
         for (int y = drawStart; y < drawEnd; y++)
         {
-            // Calculate texture Y coordinate
             texY = (int)texPos & (current_tex->height - 1);
             texPos += step;
-
-            // Get color from texture
             color = get_texture_pixel(current_tex, texX, texY);
             
             // Apply shading for Y-side walls (optional)
             //if (side == 1)
             //    color = (color >> 1) & 0x7F7F7F;
-            
-            // Draw the pixel
             my_mlx_pixel_put(&game->img, x, y, color);
         }
         x++;
